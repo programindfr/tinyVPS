@@ -1,6 +1,7 @@
 #include <stdio.h>
-#include <errno.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <uuid/uuid.h>
 
 
 
@@ -18,12 +19,14 @@ main(int argc, char *argv[])
 void
 create_vm_disk_img()
 {
-    int rc; //handle return code
-    char *newargv[] ={ NULL, NULL };
-    char *newenvp[] = { NULL };
+    char *newargv[] = { NULL, NULL };
+    char *newenvp[] = { "FAI_BASEFILEURL=https://fai-project.org/download/basefiles/", NULL };
+    uuid_t binuuid; /* uuid in binary format */
+    char uuid[37];
 
-    rc = execve("", newargv, newenvp); //exact command needed
+    uuid_generate_random(binuuid);
+    uuid_unparse(binuuid, uuid);
 
-    if (rc == -1)
-        fprintf(stderr, "error %d occur\n", errno);
+    execve("./", newargv, newenvp); /* exact command needed */
+    perror("execve");   /* execve() returns only on error */
 }

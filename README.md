@@ -9,19 +9,21 @@
   * ssh keys setup
   * fail2ban
   * ufw
-  - https://raspberrytips.com/security-tips-raspberry-pi/
-  - https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
+    https://raspberrytips.com/security-tips-raspberry-pi/
+    https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
  ## virtualisation
   * debian iso auto install (may some other to ?)
-  - https://fai-project.org/doc/man/fai-diskimage.html
+    https://fai-project.org/doc/man/fai-diskimage.html
   * qemu kvm settings
-  - https://www.qemu.org/docs/master/
+    https://www.qemu.org/docs/master/
   * main c executable
-  - https://www.gnu.org/software/libc/manual/html_node/System-Calls.html
-  - https://man7.org/linux/man-pages/man2/syscalls.2.html
-  - https://www.geeksforgeeks.org/multithreading-in-c/
+    Make sure to compile with `-luuid`
+    https://www.gnu.org/software/libc/manual/html_node/System-Calls.html
+    https://man7.org/linux/man-pages/man2/syscalls.2.html
+    https://www.geeksforgeeks.org/multithreading-in-c/
+    https://stackoverflow.com/questions/51053568/generating-a-random-uuid-in-c
   * service file
-  - https://www.linuxtricks.fr/wiki/systemd-creer-des-services-timers-unites
+    https://www.linuxtricks.fr/wiki/systemd-creer-des-services-timers-unites
  ## access
   * installation script
   * python flask website
