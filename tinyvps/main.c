@@ -6,10 +6,10 @@
 
 void add(char *strout, char *strin1, char *strin2);
 void create_vm(char *newargv[]);
-void dcreate_vm();
-void run_vm();
-void drun_vm();
-void run_vms();
+void dcreate_vm(void);
+void run_vm(char *uuid);
+void drun_vm(void);
+void run_vms(char *uuids[]);
 
 
 
@@ -51,7 +51,7 @@ create_vm(char *newargv[])  /* create a vm disk image with https://fai-project.o
 
 
 void
-dcreate_vm()    /* create a vm disk image named with uuid and setup a default config */
+dcreate_vm(void)    /* create a vm disk image named with uuid and setup a default config */
 {
     uuid_t binuuid; /* uuid in binary format */
     char uuid[37];  /* 36 char uuid and \0 */
@@ -60,9 +60,20 @@ dcreate_vm()    /* create a vm disk image named with uuid and setup a default co
     uuid_unparse(binuuid, uuid);
 
     char imagename[41]; /* 36 + 4 + 1 */
-    add(imagename, uuid, ".raw");
+    add(imagename, uuid, ".raw");   /* concat uuid an ".raw" in imagename */
 
     char *newargv[] = { "fai-diskimage", "-vu", uuid, "-S5G", "-cDEBIAN,STRETCH64,AMD64,FAIBASE,GRUB_PC,DHCPC,DEMO,CLOUD,LAST", imagename, NULL };  /* looking for -c in doc */
 
     create_vm(newargv);   
+}
+
+
+void
+run_vm(char *uuid)
+{
+    char *newargv[] = { "qemu", NULL };
+    char *newenvp[] = { NULL };
+
+    execve("qemu", newargv, newenvp);
+    perror("execve");
 }
