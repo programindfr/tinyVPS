@@ -8,8 +8,8 @@ void add(char *strout, char *strin1, char *strin2);
 void create_vm(char *newargv[]);
 void dcreate_vm(void);
 void run_vm(char *newargv[]);
-void drun_vm(void);
-void run_vms(char *uuids[]);
+void drun_vm(char *uuid[]);
+void run_vms(char **uuids[]);
 
 
 
@@ -41,7 +41,7 @@ add(char *strout, char *strin1, char *strin2)   /* concat two string in the firs
 
 
 void
-create_vm(char *newargv[])  /* create a vm disk image with https://fai-project.org/doc/man/fai-diskimage.html */
+create_vm(char *newargv[])  /* newargv must end with NULL - create a vm disk image with https://fai-project.org/doc/man/fai-diskimage.html */
 {
     char *newenvp[] = { "FAI_BASEFILEURL=https://fai-project.org/download/basefiles/", NULL };
 
@@ -69,11 +69,18 @@ dcreate_vm(void)    /* create a vm disk image named with uuid and setup a defaul
 
 
 void
-run_vm(char *newargv[]) /* start a vm disk image with qemu */
+run_vm(char *newargv[]) /* newargv must end with NULL - start a vm disk image with qemu */
 {
-    char *newargv[] = { "qemu", NULL };
     char *newenvp[] = { NULL };
 
     execve("qemu", newargv, newenvp);
-    perror("execve");
+    perror("execve");   /* execve() returns only on error */
+}
+
+
+void
+drun_vm(char *uuid[])
+{
+    char *newargv[] = {};
+    run_vm(newargv);
 }
