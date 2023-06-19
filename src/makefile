@@ -4,9 +4,9 @@ LIB=create.c run.c
 
 FLAG=-luuid
 
-MAIN=main.c $(LIB)
+MAIN=tinyvps.c $(LIB)
 
 all: main
 
 main: $(MAIN)
-	$(COMPILER) -o main $(MAIN) $(FLAG)
+	$(COMPILER) -o tinyvps $(MAIN) $(FLAG)

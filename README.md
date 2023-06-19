@@ -1,6 +1,9 @@
 # tinyVPS
  This project is a VPS which aims to consume few resources.
-
+ 
+ ## memo
+  `qemu-system-x86_64 -drive file=server.raw,format=raw -m 2G -enable-kvm -smp 4 -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::5555-:22`
+  `fai-diskimage -v -S5G -u debian -cDEBIAN,DHCPC,DEMO,FAIBASE,CLOUD,BOOKWORM,SSH_SERVER,STANDARD,FAIME,GRUB_PC,AMD64 faime-2ZHWDLYP.raw.zst`
 
 # roadmap
  ## security

@@ -11,7 +11,7 @@ create_vm(char *newargv[])  /* newargv must end with NULL - create a vm disk ima
 {
     char *newenvp[] = { "FAI_BASEFILEURL=https://fai-project.org/download/basefiles/", NULL };
 
-    execve("fai-diskimage", newargv, newenvp);
+    execve("/usr/sbin/fai-diskimage", newargv, newenvp);
     perror("execve");   /* execve() returns only on error */
 }
 
@@ -29,7 +29,7 @@ dcreate_vm(void)    /* create a vm disk image named with uuid and setup a defaul
     strcpy(imagename, uuid);
     strcat(imagename, ".raw");
 
-    char *newargv[] = { "fai-diskimage", "-vu", uuid, "-S5G", "-cDEBIAN,STRETCH64,AMD64,FAIBASE,GRUB_PC,DHCPC,DEMO,CLOUD,LAST", imagename, NULL };  /* looking for -c in doc */
+    char *newargv[] = { "/usr/sbin/fai-diskimage", "-vu", uuid, "-S5G", "-cDEBIAN,DHCPC,DEMO,FAIBASE,CLOUD,BOOKWORM,SSH_SERVER,STANDARD,FAIME,GRUB_PC,AMD64", imagename, NULL };  /* looking for -c in doc */
 
     create_vm(newargv);   
 }
