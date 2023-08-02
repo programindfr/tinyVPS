@@ -1,6 +1,6 @@
 COMPILER=gcc
 
-LIB=create.c run.c
+LIB=create.c run.c concat.c parser.c
 
 FLAG=-luuid
 
