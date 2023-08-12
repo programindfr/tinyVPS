@@ -22,9 +22,19 @@ drun_vm(vm *newVm)
     strcat(drivename, newVm->uuid);
     strcat(drivename, ".raw,format=raw");
 
-    char *newargv[] = { "/usr/bin/qemu-system-x86_64", "-drive", drivename, "-m", newVm->ram, "-enable-kvm", "-smp", newVm->core, "-device", "e1000,netdev=net0", "-netdev", "user,id=net0,hostfwd=tcp::5555-:22", NULL };
+    char hostfwd[273]; /* 12 + 26 * 10 + 1 */
+    strcpy(hostfwd, "user,id=net0");
+    for (int i=0; i<newVm->portCount; i++)
+    {
+        strcat(hostfwd, ",hostfwd=tcp::");
+        strcat(hostfwd, newVm->port[i][0]);
+        strcat(hostfwd, "-:");
+        strcat(hostfwd, newVm->port[i][1]);
+    }
 
-    char *newenvp[2] = { "DISPLAY=:0.0", NULL };    // { NULL } with -nographic
+    char *newargv[] = { "/usr/bin/qemu-system-x86_64", "-drive", drivename, "-m", newVm->ram, "-enable-kvm", "-smp", newVm->core, "-device", "e1000,netdev=net0", "-netdev", hostfwd, NULL };
+
+    char *newenvp[2] = { "DISPLAY=:0.0", NULL };    // [1] { NULL } with -nographic
 
     run_vm(newargv, newenvp);
 }
