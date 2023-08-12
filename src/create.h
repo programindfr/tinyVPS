@@ -6,4 +6,4 @@
 void create_vm(char *newargv[], char *newenvp[]);
 void dcreate_vm(vm *newVm);
 
-#endif
+#endif  // __CREATE_H__

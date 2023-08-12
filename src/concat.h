@@ -3,4 +3,4 @@
 
 char* concat(int count, ...);
 
-#endif
+#endif  // __CONCAT_H__

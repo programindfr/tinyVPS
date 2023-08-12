@@ -43,7 +43,7 @@ dcreate_vm(vm *newVm)    /* create a vm disk image named with uuid and setup a d
         ";", newVm->variables,
         ";", newVm->varend
     );
-    char *newargv[4] = { "/usr/bin/sh", "wget", url, NULL };
+    char *newargv[4] = { "/usr/bin/sh", "/usr/bin/wget", url, NULL };
     free(url);
 
     char *newenvp[1] = { NULL };

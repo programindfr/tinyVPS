@@ -18,7 +18,7 @@ typedef struct tinyvps
     char ram[7];            // ram size with unit (M/G)
     char core[3];           // core number
     char port[10][2][6];    // port forwarding host/guest, [ [ "host", "gest" ], ... ]
-    int portCount;
+    int portCount;          // how many forwarding port
 } vm;
 
-#endif
+#endif  // __TINYVPS_H__

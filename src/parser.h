@@ -5,4 +5,4 @@
 
 void port_parsing(char *value, vm *newVm);
 
-#endif
+#endif  // __PARSER_H__
