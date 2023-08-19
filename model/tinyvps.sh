@@ -15,6 +15,7 @@ _varend="sbm=2"                                         # Idk the purpuse of thi
 _ram="512M"                                             # Ram size with unit (M/G)
 _core="1"                                               # Number of allocated cores for the vm
 _port="5555:22"                                         # Port forwarding host:guest,...
+_cfgfile="~/tinyvps/machine.cfg"                        # Config file path
 
 # Link will look like this (https://fai-project.org/doc/api.html):
 # https://fai-project.org/cgi/faime.cgi?
@@ -53,6 +54,15 @@ usage(){
     [-h] Show this message
     "
     exit 1
+}
+
+use_config_file(){}
+
+create_vm(){}
+
+run_vm(){
+    # port forwarding is missing
+    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev user,id=net0
 }
 
 createVmFlag=0          # C flag
@@ -141,3 +151,13 @@ while getopts "Cb:t:d:i:u:n:p:P:k:s:v:V:R:r:c:f:F?h" OPTION; do
 done
 shift "$(($OPTIND - 1))"
 
+if [ $useConfigFileFlag -eq 1 ]
+then
+    use_config_file
+elif [ $createVmFlag -eq 1 ]
+then
+    create_vm
+elif [ $runVmFlag -eq 1 ]
+then
+    run_vm
+fi
