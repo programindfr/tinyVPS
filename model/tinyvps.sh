@@ -15,7 +15,8 @@ _varend="sbm=2"                                         # Idk the purpuse of thi
 _ram="512M"                                             # Ram size with unit (M/G)
 _core="1"                                               # Number of allocated cores for the vm
 _port="5555:22"                                         # Port forwarding host:guest,...
-_cfgfile="~/tinyvps/machine.cfg"                        # Config file path
+_datapath="$HOME/tinyvps"                               # Location for all tinyvps data
+_cfgfile="$datapath/machine.cfg"                        # Config file path
 
 # Link will look like this (https://fai-project.org/doc/api.html):
 # https://fai-project.org/cgi/faime.cgi?
@@ -61,7 +62,14 @@ use_config_file(){
 }
 
 create_vm(){
-    echo ok
+    if [ -z "$_uuid" ]
+    then
+        _uuid="$(uuidgen)"
+    fi
+    mkdir -p "$_datapath/$_uuid"
+    url="${_baseurl}type=$_type;disksize=$_disksize;format=$_format;hostname=$_uuid;username=$_username;userpw=$_userpw;partition=$_partition;keyboard=$_keyboard;suite=$_suite;$_variables;$_varend"
+    cd "$_datapath/$_uuid"
+    curl -# -O "$url"
 }
 
 run_vm(){
@@ -71,7 +79,8 @@ run_vm(){
     do
         hostfwd="$hostfwd,hostfwd=tcp::$(echo $x | cut -f 1 -d ':')-:$(echo $x | cut -f 2 -d ':')"
     done
-    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev "$hostfwd"
+    # add -nographic
+    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev "$hostfwd" &
 }
 
 createVmFlag=0          # C flag
