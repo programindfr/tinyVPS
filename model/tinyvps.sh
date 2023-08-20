@@ -56,13 +56,22 @@ usage(){
     exit 1
 }
 
-use_config_file(){}
+use_config_file(){
+    echo ok
+}
 
-create_vm(){}
+create_vm(){
+    echo ok
+}
 
 run_vm(){
-    # port forwarding is missing
-    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev user,id=net0
+    hostfwd="user,id=net0"
+    IFS=',' read -ra _PORT <<< "$_port"
+    for x in "${_PORT[@]}"
+    do
+        hostfwd="$hostfwd,hostfwd=tcp::$(echo $x | cut -f 1 -d ':')-:$(echo $x | cut -f 2 -d ':')"
+    done
+    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev "$hostfwd"
 }
 
 createVmFlag=0          # C flag
