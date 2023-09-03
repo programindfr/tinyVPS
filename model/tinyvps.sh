@@ -70,6 +70,7 @@ create_vm(){
     url="${_baseurl}type=$_type;disksize=$_disksize;format=$_format;hostname=$_uuid;username=$_username;userpw=$_userpw;partition=$_partition;keyboard=$_keyboard;suite=$_suite;$_variables;$_varend"
     cd "$_datapath/$_uuid"
     curl -# -O "$url"
+    # unzstd file
 }
 
 run_vm(){
