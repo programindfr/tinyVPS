@@ -18,7 +18,7 @@
 
 # memo
   ```
-  qemu-system-x86_64 -drive file=server.raw,format=raw -m 2G -enable-kvm -smp 4 -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::5555-:22
+  qemu-system-x86_64 -drive file=server.raw,format=raw -m 1G -enable-kvm -smp 4 -device e1000,netdev=net0 -netdev user,id=net0,hostfwd=tcp::5555-:22 -rtc base=localtime -D logfile.log -pidfile pidfile -nographic -serial none -monitor none
   ```
   -----
   ```

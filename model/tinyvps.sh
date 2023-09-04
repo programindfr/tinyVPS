@@ -80,8 +80,7 @@ run_vm(){
     do
         hostfwd="$hostfwd,hostfwd=tcp::$(echo $x | cut -f 1 -d ':')-:$(echo $x | cut -f 2 -d ':')"
     done
-    # add -nographic
-    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev "$hostfwd" &
+    qemu-system-x86_64 -drive "file=$_uuid.raw,format=raw" -m "$_ram" -enable-kvm -smp "$_core" -device e1000,netdev=net0 -netdev "$hostfwd" -rtc base=localtime -D "$_uuid.log" -pidfile "$_uuid.pid" -nographic -serial none -monitor none &
 }
 
 createVmFlag=0          # C flag
