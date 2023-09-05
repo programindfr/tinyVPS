@@ -1,36 +1,39 @@
 #!/bin/bash
 
-_baseurl="https://fai-project.org/cgi/faime.cgi?"       # API base url
-_type="cloud"                                           # Install type
-_disksize="3"                                           # Disk size in gigabytes
-_format="raw.zst"                                       # Image format
-_uuid=""                                                # Name of the vm (uuid) (name of the disk file)
-_username="debian"                                      # Username of the vm
-_userpw="debian"                                        # Password for this user
-_partition="ONE"                                        # Partition setting
-_keyboard="fr"                                          # Keyboard layout
-_suite="bookworm"                                       # Vm distro
-_variables="cl5=SSH_SERVER;cl6=STANDARD;cl8=REBOOT"     # Some settings
-_varend="sbm=2"                                         # Idk the purpuse of this var
-_ram="512M"                                             # Ram size with unit (M/G)
-_core="1"                                               # Number of allocated cores for the vm
-_port="5555:22"                                         # Port forwarding host:guest,...
-_datapath="$HOME/tinyvps"                               # Location for all tinyvps data
-_cfgfile="$datapath/machine.cfg"                        # Config file path
+set_var_default(){
+	_baseurl="https://fai-project.org/cgi/faime.cgi?"       # API base url
+	_type="cloud"                                           # Install type
+	_disksize="3"                                           # Disk size in gigabytes
+	_format="raw.zst"                                       # Image format
+	_uuid=""                                                # Name of the vm (uuid) (name of the disk file)
+	_username="debian"                                      # Username of the vm
+	_userpw="debian"                                        # Password for this user
+	_partition="ONE"                                        # Partition setting
+	_keyboard="fr"                                          # Keyboard layout
+	_suite="bookworm"                                       # Vm distro
+	_variables="cl5=SSH_SERVER;cl6=STANDARD;cl8=REBOOT"     # Some settings
+	_varend="sbm=2"                                         # Idk the purpuse of this var
+	_ram="512M"                                             # Ram size with unit (M/G)
+	_core="1"                                               # Number of allocated cores for the vm
+	_port="5555:22"                                         # Port forwarding host:guest,...
+	_datapath="$HOME/tinyvps"                               # Location for all tinyvps data
+	_cfgfile="$datapath/machine.cfg"                        # Config file path
 
-# Link will look like this (https://fai-project.org/doc/api.html):
-# https://fai-project.org/cgi/faime.cgi?
-# type=cloud
-# ;disksize=3
-# ;format=raw.zst
-# ;hostname=uuid
-# ;username=debian
-# ;userpw=debian
-# ;partition=ONE
-# ;keyboard=fr
-# ;suite=bookworm
-# ;cl5=SSH_SERVER;cl6=STANDARD;cl8=REBOOT
-# ;sbm=2
+	# Link will look like this (https://fai-project.org/doc/api.html):
+	# https://fai-project.org/cgi/faime.cgi?
+	# type=cloud
+	# ;disksize=3
+	# ;format=raw.zst
+	# ;hostname=uuid
+	# ;username=debian
+	# ;userpw=debian
+	# ;partition=ONE
+	# ;keyboard=fr
+	# ;suite=bookworm
+	# ;cl5=SSH_SERVER;cl6=STANDARD;cl8=REBOOT
+	# ;sbm=2
+}
+set_var_default
 
 usage(){
     echo "Usage: $0
@@ -58,12 +61,21 @@ usage(){
 }
 
 use_config_file(){
+	line_count=0
     while IFS= read -r line
     do
-    	if [ $(echo $line | head -c 1) = '[' -a $(echo $line | tail -c 1) = ']' ]
+    	if [ "$(echo \"$line\" | head -c 1)" = '[' -a "$(echo \"$line\" | tail -c 1)" = ']' ]
     	then
-    	
+    		if [ $line_count -gt 0 ]
+    		then
+    			set_var_default
+    		fi
+    		word_count=$(($(echo "$line" | wc -c) - 1))
+    		_uuid="$(echo \"$line\" | head -c $(($word_count - 1)) | tail -c $(($word_count - 2)))"
+    	else
+    		
     	fi
+    	line_count=$(($line_count + 1))
     done <<< "$_cfgfile"
 }
 
@@ -173,7 +185,7 @@ while getopts "Cb:t:d:i:u:n:p:P:k:s:v:V:R:r:c:f:F?h" OPTION; do
             ;;
     esac
 done
-shift "$(($OPTIND - 1))"
+shift $(($OPTIND - 1))
 
 if [ $useConfigFileFlag -eq 1 ]
 then
