@@ -58,7 +58,13 @@ usage(){
 }
 
 use_config_file(){
-    echo ok
+    while IFS= read -r line
+    do
+    	if [ $(echo $line | head -c 1) = '[' -a $(echo $line | tail -c 1) = ']' ]
+    	then
+    	
+    	fi
+    done <<< "$_cfgfile"
 }
 
 create_vm(){
