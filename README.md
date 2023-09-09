@@ -12,9 +12,23 @@ J'utilise ici la distribution [Debian](https://www.debian.org/) sans interface g
 * [configure ssh key based authentication](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
 
 ## Les outils
+Création du dossier `tinyvps`
+```sh
+cd
+mkdir tinyvps
+```
+On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible dans les releases.
 Installation de [QEMU/KVM](https://www.qemu.org/) sur [Debian](https://www.debian.org/).
 ```sh
-sudo apt install qemu qemu-system-x86
+sudo apt install qemu qemu-system-x86 bridge-utils
+```
+Il faut créer un bridge.
+```sh
+sudo brctl addbr br0
+```
+On récupère le nom de l'interface ethernet avec la commande `ip` puis on l'ajoute au bridge.
+```sh
+sudo brctl addif br0 <interface>
 ```
 * [systemd creer des services](https://www.linuxtricks.fr/wiki/systemd-creer-des-services-timers-unites)
 
