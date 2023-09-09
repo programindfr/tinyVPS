@@ -5,11 +5,20 @@ TinyVPS est un projet qui a pour vocation d'être une alternative économe en re
 J'utilise ici la distribution [Debian](https://www.debian.org/) sans interface graphique pour avoir un système léger, stable et largement compatible.
 
 # Configuration
-## Sécurité
+## Sécurité, annalyse et fun
 *à venir*
 * [unattended upgrades](https://wiki.debian.org/UnattendedUpgrades)
 * [disable root login, fail2ban, ufw](https://raspberrytips.com/security-tips-raspberry-pi/)
 * [configure ssh key based authentication](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
+vnstat, powertop, htop, neofetch, lolcat, vim, ddclient, tree, lm-sensors, rsync, zsh & ohmyzsh, (? bridge-utils)
+Dans `/etc/update-motd.d` créer le fichier `10-welcome` et retirer le droit d'execution aux autres
+```sh
+#!/bin/bash
+
+uname -a | /usr/games/lolcat -f
+uptime | /usr/games/lolcat -f
+echo "Used memory: $(vmstat -s -S M | grep 'used memory' | awk '{print $1,$2}')" | /usr/games/lolcat -f
+```
 
 ## Les outils
 Création du dossier `tinyvps`
