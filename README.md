@@ -120,7 +120,9 @@ sudo apt install vnstat powertop htop tree lm-sensors
 
 ### Ddclient
 
-*à venir*
+```bash
+sudo apt install ddclient
+```
 
 ### Nginx
 
