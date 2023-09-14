@@ -59,6 +59,8 @@ sudo apt upgrade
 
 *à venir*
 
+[unattended upgrades](https://wiki.debian.org/UnattendedUpgrades)
+
 ## Défense face à l'extérieur
 
 Plus haut j'ai expliqué avoir configuré une adresse IP statique dans mon réseau local pour plus de confort. Il est aussi très pratique et nécessaire selon les cas d'autoriser les connections rentrante, c'est-à-dire d'autoriser le monde extérieur à se connecter à notre machine. Il faut donc se défendre face aux tentatives de piratage provenant d'internet.
@@ -71,7 +73,7 @@ Fail2ban est un utilitaire qui va bloquer les tentatives d'attaque par force bru
 sudo apt install fail2ban
 ```
 
-Comme pour `sshd` il est possible d'éditer le fichier de configuration. Pour Fail2ban cela n'est pas vraiment obligé mais j'aime bien apporter ma petite touche personnel. C'est pourquoi je met un temps de bannissement d'une semaine au bout de 3 essais infructueux.
+Comme pour `sshd` il est possible d'éditer le fichier de configuration. Pour Fail2ban cela n'est pas vraiment obligé (sauf si vous avez une erreur comme moi, d'où l'ajout de `backend = systemd`) mais j'aime bien apporter ma petite touche personnel. C'est pourquoi je met un temps de bannissement d'une semaine au bout de 3 essais infructueux.
 
 ```bash
 sudo nano /etc/fail2ban/jail.local
@@ -81,6 +83,7 @@ sudo nano /etc/fail2ban/jail.local
 [DEFAULT]
 bantime = 1w
 maxretry = 3
+backend = systemd
 ```
 
 On relance ensuite le service après avoir enregistré les changement.
@@ -89,13 +92,61 @@ On relance ensuite le service après avoir enregistré les changement.
 sudo service fail2ban restart 
 ```
 
+[Source](https://raspberrytips.com/security-tips-raspberry-pi/) 
 
+### Ufw
 
-* [unattended upgrades](https://wiki.debian.org/UnattendedUpgrades)
+Ufw pour Uncomplicated FireWall  est un par feu qui permet de mettre des règles sur comment votre machine peut interagir avec d'autres réseaux tel qu'internet.
 
-* [disable root login, fail2ban, ufw](https://raspberrytips.com/security-tips-raspberry-pi/)
-  vnstat, powertop, htop, neofetch, lolcat, vim, ddclient, nginx, tree, lm-sensors, rsync, zsh & ohmyzsh, (? bridge-utils)
-  Dans `/etc/update-motd.d` créer le fichier `10-welcome` et retirer le droit d'execution aux autres
+```bash
+sudo apt install ufw
+sudo ufw allow 22
+sudo ufw enable
+```
+
+[Source](https://raspberrytips.com/security-tips-raspberry-pi/)
+
+## Des outils bien pratiques
+
+Je vais ici parler de quelques outils que je trouve pratiques et/ou amusant.
+
+### Monitoring
+
+Ces utilitaires me permettent de surveiller l'état de ma machine. Je vous laisse le loisir de vous renseigner sur eux avant de les installer.
+
+```bash
+sudo apt install vnstat powertop htop tree lm-sensors
+```
+
+### Ddclient
+
+*à venir*
+
+### Nginx
+
+*à venir*
+
+### Oh My Zsh
+
+```bash
+sudo apt install zsh git
+sh -c "$(wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
+```
+
+### Les autres
+
+```bash
+sudo apt install vim rsync
+```
+
+### Motd
+
+Il est possible de changer le message affiché lors de la connexion. Dans `/etc/update-motd.d` créer le fichier `10-welcome` et retirer le droit d'exécution aux autres. Enfin, vider le contenu de `/etc/motd`
+
+```bash
+sudo apt install lolcat
+sudo nano /etc/update-motd.d/10-welcome
+```
 
 ```sh
 #!/bin/bash
@@ -105,7 +156,13 @@ uptime | /usr/games/lolcat -f
 echo "Used memory: $(vmstat -s -S M | grep 'used memory' | awk '{print $1,$2}')" | /usr/games/lolcat -f
 ```
 
-## Les outils
+```bash
+sudo chmod -x /etc/update-motd.d/*
+sudo chmod +x /etc/update-motd.d/10-welcome
+sudo bash -c 'printf "" > /etc/motd'
+```
+
+## TinyVPS
 
 Création du dossier `tinyvps`
 
