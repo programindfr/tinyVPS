@@ -57,9 +57,14 @@ sudo apt upgrade
 
 ### Unattended Upgrades
 
-*à venir*
+```bash
+sudo apt install unattended-upgrades
+sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
+```
 
 [unattended upgrades](https://wiki.debian.org/UnattendedUpgrades)
+
+[Source](https://www.linuxcapable.com/how-to-configure-unattended-upgrades-on-ubuntu-linux/)
 
 ## Défense face à l'extérieur
 
@@ -100,7 +105,7 @@ Ufw pour Uncomplicated FireWall  est un par feu qui permet de mettre des règles
 
 ```bash
 sudo apt install ufw
-sudo ufw allow 22
+sudo ufw allow ssh
 sudo ufw enable
 ```
 
@@ -126,7 +131,9 @@ sudo apt install ddclient
 
 ### Nginx
 
-*à venir*
+```bash
+sudo apt install nginx
+```
 
 ### Oh My Zsh
 
