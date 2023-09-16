@@ -1,7 +1,6 @@
 #!/bin/bash
 
-#_tinyvps="$HOME/tinyvps"
-_tinyvps="."
+_tinyvps="$HOME/tinyvps"
 
 for machine in $(ls "$_tinyvps")
 do

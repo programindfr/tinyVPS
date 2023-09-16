@@ -10,7 +10,7 @@ J'utilise ici une machine dédiée (Home Lab) avec la distribution [Debian](http
 
 Pour plus de confort j'ai assigné une adresse IP locale statique à ma machine via l'outil d'administration de ma box internet. Cette adresse sera représentée par `192.168.2.9`, une adresse fictive que vous remplacerez par cette de votre machine.
 
-# Configuration
+# Configuration de la machine
 
 ## SSH
 
@@ -57,12 +57,32 @@ sudo apt upgrade
 
 ### Unattended Upgrades
 
+Unattended Upgrades va périodiquement et automatiquement installer les mises à jour des paquets. On édite ensuite le fichier de configuration.
+
 ```bash
 sudo apt install unattended-upgrades
 sudo nano /etc/apt/apt.conf.d/50unattended-upgrades
 ```
 
-[unattended upgrades](https://wiki.debian.org/UnattendedUpgrades)
+Décommentez ces deux lignes pour avoir l'ensemble des mises à jour.
+
+```bash
+"origin=Debian,codename=${distro_codename}-updates";
+"origin=Debian,codename=${distro_codename}-proposed-updates";
+```
+
+Décommentez et changez la valeur de ces deux autres lignes pour un redémarrage automatique de la machine à 2h00 lorsque cela est nécessaire.
+
+```bash
+Unattended-Upgrade::Automatic-Reboot "true";
+Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+```
+
+On enregistre puis on redémarre le processus.
+
+```bash
+sudo systemctl restart unattended-upgrades.service
+```
 
 [Source](https://www.linuxcapable.com/how-to-configure-unattended-upgrades-on-ubuntu-linux/)
 
@@ -123,13 +143,17 @@ Ces utilitaires me permettent de surveiller l'état de ma machine. Je vous laiss
 sudo apt install vnstat powertop htop tree lm-sensors
 ```
 
-### Ddclient
+### DDclient
+
+DDclient permet de mettre à jour votre DDNS.
 
 ```bash
 sudo apt install ddclient
 ```
 
 ### Nginx
+
+Nginx est un reverse proxy.
 
 ```bash
 sudo apt install nginx
@@ -157,7 +181,7 @@ sudo apt install lolcat
 sudo nano /etc/update-motd.d/10-welcome
 ```
 
-```sh
+```bash
 #!/bin/bash
 
 uname -a | /usr/games/lolcat -f
@@ -171,31 +195,30 @@ sudo chmod +x /etc/update-motd.d/10-welcome
 sudo bash -c 'printf "" > /etc/motd'
 ```
 
-## TinyVPS
+# TinyVPS
 
 Création du dossier `tinyvps`
 
-```sh
-cd
-mkdir tinyvps
+```bash
+mkdir ~/tinyvps
 ```
 
-On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible dans les releases.
+On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible dans les [releases]([Releases · programindfr/tinyVPS · GitHub](https://github.com/programindfr/tinyVPS/releases)).
 Installation de QEMU/KVM sur Debian.
 
-```sh
-sudo apt install qemu qemu-system-x86 bridge-utils
+```bash
+sudo apt install qemu-kvm qemu-system-x86 bridge-utils
 ```
 
 Il faut créer un bridge.
 
-```sh
+```bash
 sudo brctl addbr br0
 ```
 
 On récupère le nom de l'interface ethernet avec la commande `ip` puis on l'ajoute au bridge.
 
-```sh
+```bash
 sudo brctl addif br0 <interface>
 ```
 
@@ -213,31 +236,31 @@ Dans cette partie je vais installer Debian sur image disque puis la configurer s
 
 Il faut tout d'abord télécharger [l'instalateur Debian](https://www.debian.org/download) puis créer une image disque en format RAW avec une taille fixé de gigaoctets. [Documentation](https://www.qemu.org/docs/master/system/images.html)
 
-```sh
+```bash
 qemu-img create <machine_name.raw> <disk_size_G>
 ```
 
 On procède ensuite à l'installation. [Documentation](https://www.qemu.org/docs/master/system/invocation.html)
 
-```sh
+```bash
 qemu-system-x86_64 -boot order=cd -m 1G -cdrom <debian.iso> -drive file=<machine_name.raw>,format=raw -enable-kvm -rtc base=localtime
 ```
 
 Compression de l'image.
 
-```sh
+```bash
 zstd <machine_name.raw>
 ```
 
 Envoi.
 
-```sh
+```bash
 scp "/path/to/machine_name.raw.zst" username@domain:"/path/to/machine_name.raw.zst"
 ```
 
 Décompréssion de l'image.
 
-```sh
+```bash
 unzstd <machine_name.raw.zst>
 ```
 
@@ -245,27 +268,27 @@ unzstd <machine_name.raw.zst>
 
 A l'installation, un dossier `~/tinyvps` est créé. On créer un nouveau dossier `machine_name` à l'intérieur dans lequel on place notre image disque `machine_name.raw`. La configuration de la machine se fait via un fichier bash `run.sh` qui contient la commande QEMU/KVM.
 
-```sh
-echo #!/bin/bash >> run.sh
+```bash
+echo '#!/bin/bash' >> run.sh
 chmod +x run.sh
 ```
 
 La commande suivante est à configurer selon les besoin et à mettre à la suite de `run.sh`.
 
-```sh
+```bash
 qemu-system-x86_64 \
     -smp <number of cores> \            # core allocation
     -boot order=cd \                    # disk,cdrom
-    -m <ram size M or G> \                # RAM allocation
-    -k fr \                                # keyboard layout
-    -name <name> \                        # process name
-    -cdrom <file> \                        # iso image
-    -drive file=<disk.raw>,format=raw \    # disk image
+    -m <ram size M or G> \              # RAM allocation
+    -k fr \                             # keyboard layout
+    -name <name> \                      # process name
+    -cdrom <file> \                     # iso image
+    -drive file=<disk.raw>,format=raw \ # disk image
     -nographic \                        # disable graphical output
-    -nic tap \                            # TAP network
-    -serial none \                        # no serial output
-    -monitor none \                        # no monitor output
-    -pidfile <file> \                    # process PID
-    -enable-kvm \                        # KVM full virtualization
-    -rtc base=localtime \                # RTC clock
+    -nic tap \                          # TAP network
+    -serial none \                      # no serial output
+    -monitor none \                     # no monitor output
+    -pidfile <file> \                   # process PID
+    -enable-kvm \                       # KVM full virtualization
+    -rtc base=localtime \               # RTC clock
 ```
