@@ -207,22 +207,10 @@ On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible da
 Installation de QEMU/KVM sur Debian.
 
 ```bash
-sudo apt install qemu-kvm qemu-system-x86 bridge-utils
+sudo apt install qemu-kvm qemu-system-x86
 ```
 
 Il faut créer un bridge.
-
-```bash
-sudo brctl addbr br0
-```
-
-On récupère le nom de l'interface ethernet avec la commande `ip` puis on l'ajoute au bridge.
-
-```bash
-sudo brctl addif br0 <interface>
-```
-
-* [systemd creer des services](https://www.linuxtricks.fr/wiki/systemd-creer-des-services-timers-unites)
 
 ## Et plus encore
 
@@ -285,7 +273,7 @@ qemu-system-x86_64 \
     -cdrom <file> \                     # iso image
     -drive file=<disk.raw>,format=raw \ # disk image
     -nographic \                        # disable graphical output
-    -nic tap \                          # TAP network
+    -nic user,hostfwd=tcp::5555-:22 \   # TAP network
     -serial none \                      # no serial output
     -monitor none \                     # no monitor output
     -pidfile <file> \                   # process PID
