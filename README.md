@@ -197,10 +197,10 @@ sudo bash -c 'printf "" > /etc/motd'
 
 # TinyVPS
 
-Création du dossier `tinyvps`
+Création du dossier `.tinyvps`
 
 ```bash
-mkdir ~/tinyvps
+mkdir ~/.tinyvps
 ```
 
 On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible dans les [releases]([Releases · programindfr/tinyVPS · GitHub](https://github.com/programindfr/tinyVPS/releases)).
@@ -218,14 +218,12 @@ sudo apt install qemu-system-x86
 [Unit]
 Description=TinyVPS
 After=network-online.target
-ConditionFileIsExecutable=/home/<user>/tinyvps/tinyvps.sh
-StartLimitIntervalSec=600s
-StartLimitBurst=3
+ConditionFileIsExecutable=/home/<user>/.tinyvps/tinyvps.sh
 
 [Service]
-Type=simple
-ExecStart=/bin/bash /home/<user>/tinyvps/tinyvps.sh
-RemainAfterExit=no
+Type=forking
+ExecStart=/home/<user>/.tinyvps/tinyvps.sh
+RemainAfterExit=yes
 Restart=on-failure
 RestartSec=10s
 
@@ -233,9 +231,17 @@ RestartSec=10s
 WantedBy=multi-user.target
 ```
 
-[How to create a systemd service in Linux](https://linuxhandbook.com/create-systemd-services/)
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable tinyvps.service
+sudo systemctl start tinyvps.service
+```
 
-[systemd.unit(5) - Linux manual page](https://www.man7.org/linux/man-pages/man5/systemd.unit.5.html)
+[Source1](https://linuxhandbook.com/create-systemd-services/)
+
+[Source2](https://www.man7.org/linux/man-pages/man5/systemd.unit.5.html)
+
+[Source3](https://unix.stackexchange.com/questions/516749/how-best-to-start-my-systemd-service-to-run-multiple-apps)
 
 ## Et plus encore
 
@@ -279,29 +285,27 @@ unzstd <machine_name.raw.zst>
 
 ## Configuration de la machine
 
-A l'installation, un dossier `~/tinyvps` est créé. On créer un nouveau dossier `machine_name` à l'intérieur dans lequel on place notre image disque `machine_name.raw`. La configuration de la machine se fait via un fichier bash `run.sh` qui contient la commande QEMU/KVM.
+A l'installation, un dossier `~/.tinyvps` est créé. On créer un nouveau dossier `machine_name` à l'intérieur dans lequel on place notre image disque `machine_name.raw`. La configuration de la machine se fait via un fichier `config` qui contient la commande QEMU/KVM.
 
 ```bash
-echo '#!/bin/bash' >> run.sh
-chmod +x run.sh
+echo '-smp <number of cores> -m <ram size M or G> -k fr -name <name> -drive file=</absolute/path/to/disk.raw>,format=raw -nographic -nic user,hostfwd=tcp::5555-:22 -serial none -monitor none -enable-kvm -rtc base=localtime' > config
 ```
 
-La commande suivante est à configurer selon les besoin et à mettre à la suite de `run.sh`.
+La commande précédente est à configurer selon les besoin. Ci-dessous une brève explication des paramètres. La [documentation](https://www.qemu.org/docs/master/system/invocation.html) officielle fournie une description plus avancée.
 
 ```bash
-qemu-system-x86_64 \
-    -smp <number of cores> \            # core allocation
-    -boot order=cd \                    # disk,cdrom
-    -m <ram size M or G> \              # RAM allocation
-    -k fr \                             # keyboard layout
-    -name <name> \                      # process name
-    -cdrom <file> \                     # iso image
-    -drive file=<disk.raw>,format=raw \ # disk image
-    -nographic \                        # disable graphical output
-    -nic user,hostfwd=tcp::5555-:22 \   # network
-    -serial none \                      # no serial output
-    -monitor none \                     # no monitor output
-    -pidfile <file> \                   # process PID
-    -enable-kvm \                       # KVM full virtualization
-    -rtc base=localtime \               # RTC clock
+-smp <number of cores>             # core allocation
+-boot order=cd                     # disk,cdrom
+-m <ram size M or G>               # RAM allocation
+-k fr                              # keyboard layout
+-name <name>                       # process name
+-cdrom <file>                      # iso image
+-drive file=<disk.raw>,format=raw  # disk image
+-nographic                         # disable graphical output
+-nic user,hostfwd=tcp::5555-:22    # network
+-serial none                       # no serial output
+-monitor none                      # no monitor output
+-pidfile <file>                    # process PID
+-enable-kvm                        # KVM full virtualization
+-rtc base=localtime                # RTC clock
 ```

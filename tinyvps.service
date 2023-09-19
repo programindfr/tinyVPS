@@ -1,14 +1,12 @@
 [Unit]
 Description=TinyVPS
 After=network-online.target
-ConditionFileIsExecutable=/home/<user>/tinyvps/tinyvps.sh
-StartLimitIntervalSec=600s
-StartLimitBurst=3
+ConditionFileIsExecutable=/home/<user>/.tinyvps/tinyvps.sh
 
 [Service]
-Type=simple
-ExecStart=/bin/bash /home/<user>/tinyvps/tinyvps.sh
-RemainAfterExit=no
+Type=forking
+ExecStart=/home/<user>/.tinyvps/tinyvps.sh
+RemainAfterExit=yes
 Restart=on-failure
 RestartSec=10s
 
