@@ -212,17 +212,19 @@ sudo apt install qemu-system-x86
 
 ## tinyvps.service
 
+`/etc/systemd/system/`
+
 ```systemd
 [Unit]
-Description=Raspberry Server Manager
+Description=TinyVPS
 After=network-online.target
-ConditionFileIsExecutable=/home/rsm/rsm.sh
+ConditionFileIsExecutable=/home/<user>/tinyvps/tinyvps.sh
 StartLimitIntervalSec=600s
 StartLimitBurst=3
 
 [Service]
 Type=simple
-ExecStart=/bin/unbuffer /bin/bash /home/rsm/rsm.sh >> /home/rsm/rsm.log 2>&1
+ExecStart=/bin/bash /home/<user>/tinyvps/tinyvps.sh
 RemainAfterExit=no
 Restart=on-failure
 RestartSec=10s
@@ -231,7 +233,9 @@ RestartSec=10s
 WantedBy=multi-user.target
 ```
 
-[Source](https://linuxhandbook.com/create-systemd-services/)
+[How to create a systemd service in Linux](https://linuxhandbook.com/create-systemd-services/)
+
+[systemd.unit(5) - Linux manual page](https://www.man7.org/linux/man-pages/man5/systemd.unit.5.html)
 
 ## Et plus encore
 
