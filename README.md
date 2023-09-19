@@ -207,10 +207,31 @@ On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible da
 Installation de QEMU/KVM sur Debian.
 
 ```bash
-sudo apt install qemu-kvm qemu-system-x86
+sudo apt install qemu-system-x86
 ```
 
-Il faut créer un bridge.
+## tinyvps.service
+
+```systemd
+[Unit]
+Description=Raspberry Server Manager
+After=network-online.target
+ConditionFileIsExecutable=/home/rsm/rsm.sh
+StartLimitIntervalSec=600s
+StartLimitBurst=3
+
+[Service]
+Type=simple
+ExecStart=/bin/unbuffer /bin/bash /home/rsm/rsm.sh >> /home/rsm/rsm.log 2>&1
+RemainAfterExit=no
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target
+```
+
+[Source](https://linuxhandbook.com/create-systemd-services/)
 
 ## Et plus encore
 
@@ -273,7 +294,7 @@ qemu-system-x86_64 \
     -cdrom <file> \                     # iso image
     -drive file=<disk.raw>,format=raw \ # disk image
     -nographic \                        # disable graphical output
-    -nic user,hostfwd=tcp::5555-:22 \   # TAP network
+    -nic user,hostfwd=tcp::5555-:22 \   # network
     -serial none \                      # no serial output
     -monitor none \                     # no monitor output
     -pidfile <file> \                   # process PID
