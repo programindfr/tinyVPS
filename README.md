@@ -203,7 +203,7 @@ Création du dossier `.tinyvps`
 mkdir ~/.tinyvps
 ```
 
-On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible dans les [releases]([Releases · programindfr/tinyVPS · GitHub](https://github.com/programindfr/tinyVPS/releases)).
+On place `tinyvps.sh` dans ce dossier. Le fichier `tinyvps.sh` est disponible dans les [releases](https://github.com/programindfr/tinyVPS/releases).
 Installation de QEMU/KVM sur Debian.
 
 ```bash
