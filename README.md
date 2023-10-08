@@ -57,6 +57,8 @@ sudo apt upgrade
 
 ### Unattended Upgrades
 
+/!\ La configuration actuelle ne fonctionne pas !
+
 Unattended Upgrades va périodiquement et automatiquement installer les mises à jour des paquets. On édite ensuite le fichier de configuration.
 
 ```bash
